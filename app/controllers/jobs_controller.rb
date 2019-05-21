@@ -2,7 +2,7 @@ class JobsController < ApplicationController
   before_action :authenticate_user!, only: [:new, :create, :update, :edit, :destroy]
 
   def  index
-    @jobs = Job.all
+    @jobs = Job.where(:is_hidden => false).order("created_at DESC")
   end
 
   def show
@@ -17,7 +17,7 @@ class JobsController < ApplicationController
     @job = Job.new(job_params)
 
     if @job.save
-      redirect_to jos_path
+      redirect_to jobs_path
     else
       render :new
     end
@@ -46,11 +46,11 @@ class JobsController < ApplicationController
 
   def job_params
     params.require(:job).permit(:title, :description, :wage_lower_bound,
-       :wage_upper_bound, :contact_email)
+       :wage_upper_bound, :contact_email, :is_hidden)
   end
 
   def require_is_admin
-    if current_user.admin?
+    if !current_user.admin?
       flash[:alert] = 'You are not admin'
       redirect_to root_path
     end

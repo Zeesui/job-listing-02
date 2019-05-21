@@ -3,7 +3,7 @@ class Admin::JobsController < ApplicationController
   before_action :require_is_admin
 
   def show
-    @job = Job.find(params[:id])
+    @job = Job.all
   end
 
   def index
@@ -46,13 +46,14 @@ class Admin::JobsController < ApplicationController
 
   def job_params
     params.require(:job).permit(:title, :description, :wage_lower_bound,
-       :wage_upper_bound, :contact_email)
+       :wage_upper_bound, :contact_email, :is_hidden)
   end
 
   def require_is_admin
-    if current_user.admin?
+    if !current_user.admin?
       flash[:alert] = 'You are not admin'
       redirect_to root_path
     end
   end
-end
+
+  end
